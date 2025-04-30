@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/green_circle.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrettyJSON</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link rel="stylesheet" href="src/styles.css" type="text/css">
+</head>
+
+<body style="padding: 1.5rem 20%;">
+    <header>
+        <h1>PrettyJSON</h1>
+        <p><em>Instantly lint, format &amp; validate your JSON.</em></p>
+        <blockquote>Paste or type your JSON snipet below, and let PrettyJSON lint and prettify it.</blockquote>
+    </header>
+
+    <main>
+
+        <div id="editorParent">
+            <button id="copyButton" class="btn btn-secondary btn-sm" title="Copy to clipboard">
+                <svg width="20" height="20" class="px-1 py-1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="currentColor" stroke="currentColor"
+                        d="M448 0H224C188.7 0 160 28.65 160 64v224c0 35.35 28.65 64 64 64h224c35.35 0 64-28.65 64-64V64C512 28.65 483.3 0 448 0zM464 288c0 8.822-7.178 16-16 16H224C215.2 304 208 296.8 208 288V64c0-8.822 7.178-16 16-16h224c8.822 0 16 7.178 16 16V288zM304 448c0 8.822-7.178 16-16 16H64c-8.822 0-16-7.178-16-16V224c0-8.822 7.178-16 16-16h64V160H64C28.65 160 0 188.7 0 224v224c0 35.35 28.65 64 64 64h224c35.35 0 64-28.65 64-64v-64h-48V448z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <p>
+            <button id="prettifyButton" class="btn btn-success">Prettify</button>
+            <button id="clearButton" class="btn btn-secondary">Clear</button>
+            <button id="linearizeButton" class="btn btn-secondary">Linearize</button>
+        </p>
+
+
+        <!-- Quick refresher -->
+        <section class="my-5">
+            <h2>Quick JSON Refresher</h2>
+            <ul>
+                <li><strong>Objects</strong>: <code>{ "key": "value" }</code> — keys must be strings wrapped in double
+                    quotes.</li>
+                <li><strong>Arrays</strong>: <code>[1, 2, 3]</code> — elements are ordered, zero-indexed.</li>
+                <li><strong>Primitives</strong>: <code>string</code>, <code>number</code>, <code>boolean</code>,
+                    <code>null</code>. No single quotes, no undefined.
+                </li>
+                <li><strong>Escapes</strong>: <code>\n</code>, <code>\t</code>, <code>\"</code>, <code>\\</code>,
+                    <code>\uXXXX</code> for Unicode.
+                </li>
+                <li><strong>Comments</strong>: Not part of the JSON spec (use preprocessors or JSONC if you need them).
+                </li>
+            </ul>
+        </section>
+
+        <!-- Common errors -->
+        <section class="my-5">
+            <h2>Common Lint Errors &amp; Fixes</h2>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Error</th>
+                        <th>Why it happens</th>
+                        <th>Quick fix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Trailing comma</td>
+                        <td>Last item in object/array ends with a comma.</td>
+                        <td>Remove the comma or add another item.</td>
+                    </tr>
+                    <tr>
+                        <td>Unquoted key</td>
+                        <td><code>{ name: "PrettyJSON" }</code></td>
+                        <td>Wrap the key in <code>"</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>Single quotes</td>
+                        <td><code>'value'</code></td>
+                        <td>Swap to <code>"value"</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>Duplicate keys</td>
+                        <td><code>{ "id":1, "id":2 }</code></td>
+                        <td>Consolidate or rename.</td>
+                    </tr>
+                    <tr>
+                        <td>Control characters in strings</td>
+                        <td>Unescaped newline, tab, backspace, etc.</td>
+                        <td>Escape or remove them.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- FAQs -->
+        <section class="my-5">
+            <h2>FAQs</h2>
+
+            <article>
+                <h3>Does PrettyJSON send my data to a server?</h3>
+                <p>No. Everything happens locally in your browser tab.</p>
+            </article>
+
+            <article>
+                <h3>Can I prettify massive files?</h3>
+                <p>Yes—streaming mode formats multi-megabyte blobs without freezing the UI.</p>
+            </article>
+        </section>
+
+        <!-- Call to action -->
+        <section class="my-5">
+            <h2>Ready to make your JSON pretty?</h2>
+            <ol>
+                <li>Paste or type your JSON.</li>
+                <li>Click <strong>Prettify</strong>.</li>
+                <li>Copy the clean result or download it as a file.</li>
+            </ol>
+            <p>That’s it. Less time fighting brackets, more time building features—<strong>PrettyJSON</strong> has your
+                back.</p>
+        </section>
+
+    </main>
+
+
+    <footer>
+        <hr>
+        <p><strong>PrettyJSON</strong> &mdash; make your data readable.</p>
+
+        <p>All processing happens <em>100&nbsp;% client-side</em>. No data ever leaves your browser.</p>
+
+        <p>&copy; 2025</p>
+    </footer>
+
+    <script type="module" src="/src/main.mts"></script>
+</body>
+
+</html>

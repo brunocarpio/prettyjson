@@ -1,0 +1,15 @@
+#editorParent {
+    position: relative;
+    margin-bottom: 1.5em;
+}
+
+#copyButton {
+    position: absolute;
+    z-index: 1;
+    top: 0.5em;
+    right: 1em;
+}
+
+.cm-json-error {
+    content: url("https://www.svgrepo.com/show/288043/no-fire.svg");
+}
