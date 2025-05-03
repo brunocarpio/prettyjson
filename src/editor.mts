@@ -47,31 +47,43 @@ export function overwrite(option: string) {
     if (editorView) {
         let state = editorView.state;
         let isValid = diagnosticCount(state) == 0;
-        let str = "";
-        switch (option) {
-            case "pretty":
-                if (isValid) {
+        if (isValid) {
+            let str = "";
+            let tmp = "";
+            switch (option) {
+                case "pretty":
                     str = JSON.stringify(JSON.parse(state.doc.toString()), null, 2);
-                }
-                break;
-            case "linear":
-                if (isValid) {
+                    break;
+                case "linear":
                     str = JSON.stringify(JSON.parse(state.doc.toString()));
-                }
-                break;
-            case "empty":
-                break;
-            default:
-                break;
-        }
-        if (state.doc.toString() && isValid) {
-            editorView.dispatch({
-                changes: {
-                    from: 0,
-                    to: state.doc.length,
-                    insert: str
-                },
-            });
+                    break;
+                case "empty":
+                    break;
+                case "escape":
+                    tmp = JSON.stringify({ remove: state.doc.toString() });
+                    str = tmp.substring(tmp.indexOf(":") + 1, tmp.length - 1);
+                    break;
+                case "unescape":
+                    tmp = state.doc.toString();
+                    if (tmp[0] === '"') {
+                        str = JSON.parse(tmp);
+                    }
+                    else {
+                        str = tmp;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (state.doc.toString()) {
+                editorView.dispatch({
+                    changes: {
+                        from: 0,
+                        to: state.doc.length,
+                        insert: str
+                    },
+                });
+            }
         }
     }
 }
