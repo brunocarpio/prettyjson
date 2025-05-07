@@ -22,7 +22,7 @@ export let initial = {
 function fixedHeight() {
     return EditorView.theme({
         "&": {
-            height: "500px",
+            height: "600px",
         },
         ".cm-scroller": {
             overflow: "auto",
