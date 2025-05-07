@@ -48,28 +48,29 @@ export function overwrite(option: string) {
         let state = editorView.state;
         let isValid = diagnosticCount(state) == 0;
         if (isValid) {
-            let str = "";
+            let content = state.doc.toString();
+            let str = content;
             let tmp = "";
             switch (option) {
                 case "pretty":
-                    str = JSON.stringify(JSON.parse(state.doc.toString()), null, 2);
+                    str = JSON.stringify(JSON.parse(content), null, 2);
                     break;
                 case "linear":
-                    str = JSON.stringify(JSON.parse(state.doc.toString()));
+                    str = JSON.stringify(JSON.parse(content));
                     break;
                 case "empty":
                     break;
                 case "escape":
-                    tmp = JSON.stringify({ remove: state.doc.toString() });
-                    str = tmp.substring(tmp.indexOf(":") + 1, tmp.length - 1);
+                    tmp = JSON.stringify(`${content.substring(content.indexOf("{") + 1, content.lastIndexOf("}"))}`);
+                    tmp = tmp.substring(1, tmp.length - 1);
+                    str = '"{' + tmp + '}"';
                     break;
                 case "unescape":
-                    tmp = state.doc.toString();
-                    if (tmp[0] === '"') {
-                        str = JSON.parse(tmp);
-                    }
-                    else {
-                        str = tmp;
+                    if (content[0] === '"') {
+                        str = JSON.parse(content);
+                        if (str.startsWith("{\\")) {
+                            str = '"' + str + '"';
+                        }
                     }
                     break;
                 default:
