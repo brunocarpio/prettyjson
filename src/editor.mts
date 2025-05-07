@@ -50,7 +50,6 @@ export function overwrite(option: string) {
         if (isValid) {
             let content = state.doc.toString();
             let str = content;
-            let tmp = "";
             switch (option) {
                 case "pretty":
                     str = JSON.stringify(JSON.parse(content), null, 2);
@@ -61,14 +60,32 @@ export function overwrite(option: string) {
                 case "empty":
                     break;
                 case "escape":
-                    tmp = JSON.stringify(`${content.substring(content.indexOf("{") + 1, content.lastIndexOf("}"))}`);
+                    let b_option = "";
+                    let bracketIdx = content.indexOf("[") >= 0 ? content.indexOf("[") : Infinity;
+                    let braceIdx = content.indexOf("{") >= 0 ? content.indexOf("{") : Infinity;
+                    b_option = bracketIdx < braceIdx ? "[" : "{";
+                    let open = "";
+                    let close = "";
+                    switch (b_option) {
+                        case "[":
+                            open = "[";
+                            close = "]";
+                            break;
+                        case "{":
+                            open = "{";
+                            close = "}";
+                            break;
+                        default:
+                            break;
+                    }
+                    let tmp = JSON.stringify(`${content.substring(content.indexOf(open) + 1, content.lastIndexOf(close))}`);
                     tmp = tmp.substring(1, tmp.length - 1);
-                    str = '"{' + tmp + '}"';
+                    str = `"${open}` + tmp + `${close}"`;
                     break;
                 case "unescape":
                     if (content[0] === '"') {
                         str = JSON.parse(content);
-                        if (str.startsWith("{\\")) {
+                        if (str.startsWith("{\\") || str.startsWith("[\\") || str.startsWith("[{\\")) {
                             str = '"' + str + '"';
                         }
                     }
