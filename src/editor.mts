@@ -97,6 +97,9 @@ function syntaxErrorListener() {
     return EditorView.updateListener.of(async (update: ViewUpdate) => {
         if (diagnosticCount(update.state) > 0) {
             let alertParent = document.querySelector("div.cm-panel.cm-panel-lint")! as HTMLDivElement;
+            if (!update.state.doc.toString()) {
+                alertParent.style.display = "none";
+            }
             if (alertParent) {
                 alertParent.querySelector("button")!.style.display = "none";
                 alertParent.classList.add("alert", "alert-danger");
