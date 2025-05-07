@@ -38,67 +38,6 @@
             <button id="unescapeButton" class="btn btn-secondary">Unescape</button>
         </p>
 
-
-        <!-- Quick refresher -->
-        <section class="my-5">
-            <h2>Quick JSON Refresher</h2>
-            <ul>
-                <li><strong>Objects</strong>: <code>{ "key": "value" }</code> — keys must be strings wrapped in double
-                    quotes.</li>
-                <li><strong>Arrays</strong>: <code>[1, 2, 3]</code> — elements are ordered, zero-indexed.</li>
-                <li><strong>Primitives</strong>: <code>string</code>, <code>number</code>, <code>boolean</code>,
-                    <code>null</code>. No single quotes, no undefined.
-                </li>
-                <li><strong>Escapes</strong>: <code>\n</code>, <code>\t</code>, <code>\"</code>, <code>\\</code>,
-                    <code>\uXXXX</code> for Unicode.
-                </li>
-                <li><strong>Comments</strong>: Not part of the JSON spec (use preprocessors or JSONC if you need them).
-                </li>
-            </ul>
-        </section>
-
-        <!-- Common errors -->
-        <section class="my-5">
-            <h2>Common Lint Errors &amp; Fixes</h2>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Error</th>
-                        <th>Why it happens</th>
-                        <th>Quick fix</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Trailing comma</td>
-                        <td>Last item in object/array ends with a comma.</td>
-                        <td>Remove the comma or add another item.</td>
-                    </tr>
-                    <tr>
-                        <td>Unquoted key</td>
-                        <td><code>{ name: "PrettyJSON" }</code></td>
-                        <td>Wrap the key in <code>"</code>.</td>
-                    </tr>
-                    <tr>
-                        <td>Single quotes</td>
-                        <td><code>'value'</code></td>
-                        <td>Swap to <code>"value"</code>.</td>
-                    </tr>
-                    <tr>
-                        <td>Duplicate keys</td>
-                        <td><code>{ "id":1, "id":2 }</code></td>
-                        <td>Consolidate or rename.</td>
-                    </tr>
-                    <tr>
-                        <td>Control characters in strings</td>
-                        <td>Unescaped newline, tab, backspace, etc.</td>
-                        <td>Escape or remove them.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
     </main>
 
 
