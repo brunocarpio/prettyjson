@@ -19,7 +19,79 @@ export let initial = {
     isDarkTimeZero: false,
 }
 
-function fixedHeight() {
+export function toDarkTheme(isDark: boolean): void {
+    if (!EditorView) return;
+    editorView.dispatch(
+        {
+            effects: [
+                theme.reconfigure(isDark ? darkTheme : lightTheme),
+            ],
+        }
+    );
+}
+
+export function getDocString(): string {
+    return editorView.state.doc.toString()
+}
+
+export function overwrite(option: string): void {
+    if (!editorView) return;
+
+    let state = editorView.state;
+
+    if (diagnosticCount(state) !== 0) return;
+
+    let content = state.doc.toString();
+    if (!content) return;
+
+    switch (option) {
+        case "pretty":
+            prettify(content, 0, content.length);
+            break;
+        case "linear":
+            linearize(content, 0, content.length);
+            break;
+        case "clear":
+            clear();
+            break;
+        case "escape":
+            escape(content, 0, content.length);
+            break;
+        case "unescape":
+            unescape(content, 0, content.length);
+            break;
+        default:
+            break;
+    }
+}
+
+export function init() {
+    if (!editorParent) return;
+
+    editorView = new EditorView({
+        state: EditorState.create({
+            extensions:
+                [
+                    basicSetup,
+                    EditorView.lineWrapping,
+                    fixedHeight(),
+                    highlightTrailingWhitespace(),
+                    json(),
+                    theme.of(initial.isDarkTimeZero ? darkTheme : lightTheme),
+                    linter(jsonParseLinter(), { delay: 250, autoPanel: true }),
+                    lintGutter(),
+                    placeholder("Enter your JSON"),
+                    syntaxErrorListener(),
+                    testListener()
+                ]
+        }),
+        parent: editorParent
+    });
+
+    return editorView;
+}
+
+function fixedHeight(): Extension {
     return EditorView.theme({
         "&": {
             height: "600px",
@@ -31,126 +103,119 @@ function fixedHeight() {
     });
 }
 
-export function toDarkTheme(isDark: boolean) {
-    if (editorView) {
-        editorView.dispatch(
-            {
-                effects: [
-                    theme.reconfigure(isDark ? darkTheme : lightTheme),
-                ],
-            }
-        );
-    }
-}
-
-export function overwrite(option: string) {
-    if (editorView) {
-        let state = editorView.state;
-        let isValid = diagnosticCount(state) == 0;
-        if (isValid) {
-            let content = state.doc.toString();
-            let str = content;
-            switch (option) {
-                case "pretty":
-                    str = JSON.stringify(JSON.parse(content), null, 2);
-                    break;
-                case "linear":
-                    str = JSON.stringify(JSON.parse(content));
-                    break;
-                case "empty":
-                    break;
-                case "escape":
-                    let b_option = "";
-                    let bracketIdx = content.indexOf("[") >= 0 ? content.indexOf("[") : Infinity;
-                    let braceIdx = content.indexOf("{") >= 0 ? content.indexOf("{") : Infinity;
-                    b_option = bracketIdx < braceIdx ? "[" : "{";
-                    let open = "";
-                    let close = "";
-                    switch (b_option) {
-                        case "[":
-                            open = "[";
-                            close = "]";
-                            break;
-                        case "{":
-                            open = "{";
-                            close = "}";
-                            break;
-                        default:
-                            break;
-                    }
-                    let tmp = JSON.stringify(`${content.substring(content.indexOf(open) + 1, content.lastIndexOf(close))}`);
-                    tmp = tmp.substring(1, tmp.length - 1);
-                    str = `"${open}` + tmp + `${close}"`;
-                    break;
-                case "unescape":
-                    if (content[0] === '"') {
-                        str = JSON.parse(content);
-                        if (str.startsWith("{\\") || str.startsWith("[\\") || str.startsWith("[{\\")) {
-                            str = '"' + str + '"';
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-            if (state.doc.toString()) {
-                editorView.dispatch({
-                    changes: {
-                        from: 0,
-                        to: state.doc.length,
-                        insert: str
-                    },
-                });
-            }
-        }
-    }
-}
-
-export function getDocString() {
-    return editorView.state.doc.toString()
-}
-
-function syntaxErrorListener() {
-    return EditorView.updateListener.of(async (update: ViewUpdate) => {
-        if (diagnosticCount(update.state) > 0) {
-            let alertParent = document.querySelector("div.cm-panel.cm-panel-lint")! as HTMLDivElement;
-            if (!update.state.doc.toString()) {
-                alertParent.style.display = "none";
-            }
-            if (alertParent) {
-                alertParent.querySelector("button")!.style.display = "none";
-                alertParent.classList.add("alert", "alert-danger");
-                let li = alertParent.querySelector("li")!;
-                li.style.background = "none";
-                let errorMarker = document.querySelector("div.cm-lint-marker.cm-lint-marker-error") as HTMLDivElement;
-                if (errorMarker) {
-                    errorMarker.classList.replace("cm-lint-marker-error", "cm-json-error")
-                }
-            }
+function prettify(content: string, from: number, to: number): void {
+    editorView.dispatch({
+        changes: {
+            from,
+            to,
+            insert: JSON.stringify(JSON.parse(content), null, 2)
         }
     });
 }
 
-export function init() {
-    if (editorParent) {
-        editorView = new EditorView({
-            state: EditorState.create({
-                extensions:
-                    [
-                        basicSetup,
-                        EditorView.lineWrapping,
-                        fixedHeight(),
-                        highlightTrailingWhitespace(),
-                        json(),
-                        theme.of(initial.isDarkTimeZero ? darkTheme : lightTheme),
-                        linter(jsonParseLinter(), { delay: 250, autoPanel: true }),
-                        lintGutter(),
-                        placeholder("Enter your JSON"),
-                        syntaxErrorListener()
-                    ]
-            }),
-            parent: editorParent
-        });
-        return editorView;
-    }
+function linearize(content: string, from: number, to: number): void {
+    editorView.dispatch({
+        changes: {
+            from,
+            to,
+            insert: JSON.stringify(JSON.parse(content))
+        }
+    });
 }
+
+function clear(): void {
+    editorView.dispatch({
+        changes: {
+            from: 0,
+            to: editorView.state.doc.toString().length,
+            insert: ""
+        }
+    });
+}
+
+function escape(content: string, from: number, to: number): void {
+    let b_option = "";
+    let bracketIdx = content.indexOf("[") >= 0 ? content.indexOf("[") : Infinity;
+    let braceIdx = content.indexOf("{") >= 0 ? content.indexOf("{") : Infinity;
+
+    b_option = bracketIdx < braceIdx ? "[" : "{";
+
+    let open = "";
+    let close = "";
+    switch (b_option) {
+        case "[":
+            open = "[";
+            close = "]";
+            break;
+        case "{":
+            open = "{";
+            close = "}";
+            break;
+        default:
+            break;
+    }
+
+    let tmp = JSON.stringify(`${content.substring(content.indexOf(open) + 1, content.lastIndexOf(close))}`);
+    tmp = tmp.substring(1, tmp.length - 1);
+    tmp = `"${open}` + tmp + `${close}"`;
+
+    editorView.dispatch({
+        changes: {
+            from,
+            to,
+            insert: tmp
+        }
+    });
+}
+
+function unescape(content: string, from: number, to: number): void {
+    if (content[0] !== '"') return;
+
+    let str = JSON.parse(content);
+
+    if (str.startsWith("{\\") || str.startsWith("[\\") || str.startsWith("[{\\")) {
+        str = '"' + str + '"';
+    }
+
+    editorView.dispatch({
+        changes: {
+            from,
+            to,
+            insert: str
+        }
+    });
+}
+
+function syntaxErrorListener() {
+    return EditorView.updateListener.of(async (update: ViewUpdate) => {
+        if (diagnosticCount(update.state) === 0) return;
+
+        let alertParent = document.querySelector("div.cm-panel.cm-panel-lint")! as HTMLDivElement;
+
+        if (update.state.doc.toString() === "") {
+            alertParent.style.display = "none";
+            return;
+        }
+
+        if (!alertParent) return;
+
+        alertParent.querySelector("button")!.style.display = "none";
+        alertParent.classList.add("alert", "alert-danger");
+        let li = alertParent.querySelector("li")!;
+        li.style.background = "none";
+        let errorMarker = document.querySelector("div.cm-lint-marker.cm-lint-marker-error") as HTMLDivElement;
+        if (errorMarker) {
+            errorMarker.classList.replace("cm-lint-marker-error", "cm-json-error")
+        }
+    });
+}
+
+function testListener() {
+    return EditorView.updateListener.of(async (update: ViewUpdate) => {
+        if (!update.state.selection.main.empty) {
+            console.log(update.state.selection.main.empty)
+        }
+    })
+}
+
+
