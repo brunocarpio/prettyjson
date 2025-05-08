@@ -104,6 +104,7 @@ function fixedHeight(): Extension {
     return EditorView.theme({
         "&": {
             height: "600px",
+            "font-size": "0.9rem"
         },
         ".cm-scroller": {
             overflow: "auto",
