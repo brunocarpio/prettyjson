@@ -44,21 +44,31 @@ export function overwrite(option: string): void {
     let content = state.doc.toString();
     if (!content) return;
 
+    let from = 0;
+    let to = content.length;
+    let selection = content;
+
+    if (!state.selection.main.empty) {
+        from = state.selection.main.anchor.valueOf();
+        to = state.selection.main.head.valueOf();
+        selection = content.substring(from, to);
+    }
+
     switch (option) {
         case "pretty":
-            prettify(content, 0, content.length);
+            prettify(selection, from, to);
             break;
         case "linear":
-            linearize(content, 0, content.length);
+            linearize(selection, from, to);
             break;
         case "clear":
             clear();
             break;
         case "escape":
-            escape(content, 0, content.length);
+            escape(selection, from, to);
             break;
         case "unescape":
-            unescape(content, 0, content.length);
+            unescape(selection, from, to);
             break;
         default:
             break;
@@ -81,8 +91,7 @@ export function init() {
                     linter(jsonParseLinter(), { delay: 250, autoPanel: true }),
                     lintGutter(),
                     placeholder("Enter your JSON"),
-                    syntaxErrorListener(),
-                    testListener()
+                    syntaxErrorListener()
                 ]
         }),
         parent: editorParent
@@ -186,36 +195,28 @@ function unescape(content: string, from: number, to: number): void {
     });
 }
 
-function syntaxErrorListener() {
+function syntaxErrorListener(): Extension {
     return EditorView.updateListener.of(async (update: ViewUpdate) => {
         if (diagnosticCount(update.state) === 0) return;
 
         let alertParent = document.querySelector("div.cm-panel.cm-panel-lint")! as HTMLDivElement;
 
-        if (update.state.doc.toString() === "") {
-            alertParent.style.display = "none";
-            return;
-        }
-
         if (!alertParent) return;
 
-        alertParent.querySelector("button")!.style.display = "none";
-        alertParent.classList.add("alert", "alert-danger");
-        let li = alertParent.querySelector("li")!;
-        li.style.background = "none";
+        if (update.state.doc.toString() === "") {
+            alertParent.style.display = "none";
+        }
+        else {
+            alertParent.querySelector("button")!.style.display = "none";
+            alertParent.classList.add("alert", "alert-danger");
+            let li = alertParent.querySelector("li")!;
+            li.style.background = "none";
+        }
+
         let errorMarker = document.querySelector("div.cm-lint-marker.cm-lint-marker-error") as HTMLDivElement;
         if (errorMarker) {
             errorMarker.classList.replace("cm-lint-marker-error", "cm-json-error")
         }
     });
 }
-
-function testListener() {
-    return EditorView.updateListener.of(async (update: ViewUpdate) => {
-        if (!update.state.selection.main.empty) {
-            console.log(update.state.selection.main.empty)
-        }
-    })
-}
-
 
