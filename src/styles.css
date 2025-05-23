@@ -4,10 +4,10 @@
 }
 .a-demo-cm6 .cm-editor {
   height: 100%;
-  max-height: 400px;
+  max-height: 450px;
 }
 .a-demo-cm6 .cm-gutter, .a-demo-cm6 .cm-contnet {
-  min-height: 300px;
+  min-height: 340px;
 }
 
 #copyButton {
