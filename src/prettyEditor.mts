@@ -26,6 +26,24 @@ export let state: State = {
   toDarkTheme,
 };
 
+function byteSizeListener(): Extension {
+  return EditorView.updateListener.of(async (update: ViewUpdate) => {
+    let byteSize = document.getElementById("byteSize");
+    if (!state.editorView || !byteSize) {
+      return;
+    }
+    let content = update.state.doc.toString();
+    let size = new Blob([content]).size;
+    if (0 <= size && size < Math.pow(10, 3)) {
+      byteSize.textContent = size + " B";
+    } else if (size < Math.pow(10, 6)) {
+      byteSize.textContent = Number(size / Math.pow(10, 3)).toFixed(3) + " KB";
+    } else {
+      byteSize.textContent = Number(size / Math.pow(10, 6)).toFixed(3) + " MB";
+    }
+  });
+}
+
 function toDarkTheme(isDark: boolean): void {
   if (!EditorView) return;
   state.editorView?.dispatch({
@@ -242,6 +260,7 @@ function main() {
         placeholder("Enter your JSON"),
         syntaxErrorListener(),
         lineColumnListener(),
+        byteSizeListener(),
       ],
     }),
     parent: editorParent,
