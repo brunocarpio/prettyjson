@@ -100,8 +100,7 @@ function overwrite(option: string): void {
 function fixedHeight(): Extension {
   return EditorView.theme({
     "&": {
-      height: "600px",
-      "font-size": "0.9rem",
+      "font-size": "1rem",
     },
     ".cm-scroller": {
       overflow: "auto",
