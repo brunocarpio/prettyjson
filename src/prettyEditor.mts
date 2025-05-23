@@ -10,47 +10,51 @@ import { githubDark } from "@ddietr/codemirror-themes/theme/github-dark";
 import { githubLight } from "@ddietr/codemirror-themes/theme/github-light";
 import { basicSetup, EditorView } from "codemirror";
 
-let editorParent = document.getElementById("editorParent");
+interface State {
+  editorView: EditorView | null;
+  theme: Compartment;
+  overwrite: Function;
+  getDocString: Function;
+  toDarkTheme: Function;
+}
 
-let lightTheme: Extension = githubLight;
-let darkTheme: Extension = githubDark;
-
-let theme: Compartment = new Compartment();
-
-let editorView: EditorView;
-
-export let initial = {
-  isDarkTimeZero: false,
+export let state: State = {
+  editorView: null,
+  theme: new Compartment(),
+  overwrite,
+  getDocString,
+  toDarkTheme,
 };
 
-export function toDarkTheme(isDark: boolean): void {
+function toDarkTheme(isDark: boolean): void {
   if (!EditorView) return;
-  editorView.dispatch({
-    effects: [theme.reconfigure(isDark ? darkTheme : lightTheme)],
+  state.editorView?.dispatch({
+    effects: [state.theme.reconfigure(isDark ? githubDark : githubLight)],
   });
 }
 
-export function getDocString(): string {
-  return editorView.state.doc.toString();
+function getDocString(): string | undefined {
+  return state.editorView?.state.doc.toString();
 }
 
-export function overwrite(option: string): void {
+function overwrite(option: string): void {
+  let { editorView } = state;
   if (!editorView) return;
 
-  let state = editorView.state;
+  let evState = editorView.state;
 
-  if (diagnosticCount(state) !== 0) return;
+  if (diagnosticCount(evState) !== 0) return;
 
-  let content = state.doc.toString();
+  let content = evState.doc.toString();
   if (!content) return;
 
   let from = 0;
   let to = content.length;
   let selection = content;
 
-  if (!state.selection.main.empty) {
-    from = state.selection.main.anchor.valueOf();
-    to = state.selection.main.head.valueOf();
+  if (!evState.selection.main.empty) {
+    from = evState.selection.main.anchor.valueOf();
+    to = evState.selection.main.head.valueOf();
     selection = content.substring(from, to);
   }
 
@@ -75,31 +79,6 @@ export function overwrite(option: string): void {
   }
 }
 
-export function init() {
-  if (!editorParent) return;
-
-  editorView = new EditorView({
-    state: EditorState.create({
-      extensions: [
-        basicSetup,
-        EditorView.lineWrapping,
-        fixedHeight(),
-        highlightTrailingWhitespace(),
-        json(),
-        theme.of(initial.isDarkTimeZero ? darkTheme : lightTheme),
-        linter(jsonParseLinter(), { delay: 250, autoPanel: true }),
-        lintGutter(),
-        placeholder("Enter your JSON"),
-        syntaxErrorListener(),
-        lineColumnListener(),
-      ],
-    }),
-    parent: editorParent,
-  });
-
-  return editorView;
-}
-
 function fixedHeight(): Extension {
   return EditorView.theme({
     "&": {
@@ -114,7 +93,7 @@ function fixedHeight(): Extension {
 }
 
 function prettify(content: string, from: number, to: number): void {
-  editorView.dispatch({
+  state.editorView?.dispatch({
     changes: {
       from,
       to,
@@ -124,7 +103,7 @@ function prettify(content: string, from: number, to: number): void {
 }
 
 function linearize(content: string, from: number, to: number): void {
-  editorView.dispatch({
+  state.editorView?.dispatch({
     changes: {
       from,
       to,
@@ -134,10 +113,10 @@ function linearize(content: string, from: number, to: number): void {
 }
 
 function clear(): void {
-  editorView.dispatch({
+  state.editorView?.dispatch({
     changes: {
       from: 0,
-      to: editorView.state.doc.toString().length,
+      to: state.editorView.state.doc.toString().length,
       insert: "",
     },
   });
@@ -171,7 +150,7 @@ function escape(content: string, from: number, to: number): void {
   tmp = tmp.substring(1, tmp.length - 1);
   tmp = `"${open}` + tmp + `${close}"`;
 
-  editorView.dispatch({
+  state.editorView?.dispatch({
     changes: {
       from,
       to,
@@ -193,7 +172,7 @@ function unescape(content: string, from: number, to: number): void {
     str = '"' + str + '"';
   }
 
-  editorView.dispatch({
+  state.editorView?.dispatch({
     changes: {
       from,
       to,
@@ -229,6 +208,7 @@ function syntaxErrorListener(): Extension {
     }
   });
 }
+
 function lineColumnListener(): Extension {
   return EditorView.updateListener.of(async (update: ViewUpdate) => {
     let lineColumn = document.getElementById("lineColumn");
@@ -243,3 +223,31 @@ function lineColumnListener(): Extension {
         update.state.doc.lineAt(update.state.selection.main.head).from);
   });
 }
+
+function main() {
+  let editorParent = document.getElementById("editorParent");
+  if (!editorParent) return;
+
+  let editorView = new EditorView({
+    state: EditorState.create({
+      extensions: [
+        basicSetup,
+        EditorView.lineWrapping,
+        fixedHeight(),
+        highlightTrailingWhitespace(),
+        json(),
+        state.theme.of(githubLight),
+        linter(jsonParseLinter(), { delay: 250, autoPanel: true }),
+        lintGutter(),
+        placeholder("Enter your JSON"),
+        syntaxErrorListener(),
+        lineColumnListener(),
+      ],
+    }),
+    parent: editorParent,
+  });
+
+  state.editorView = editorView;
+}
+
+main();

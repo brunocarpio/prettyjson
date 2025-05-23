@@ -1,25 +1,25 @@
-import * as Editor from "./editor.mts";
+import { state as prettyEditorState } from "./prettyEditor.mts";
 
 document.getElementById("copyButton")?.addEventListener("click", () => {
-  navigator.clipboard.writeText(Editor.getDocString());
+  navigator.clipboard.writeText(prettyEditorState.getDocString());
 });
 
 document
   .getElementById("clearButton")
-  ?.addEventListener("click", () => Editor.overwrite("clear"));
+  ?.addEventListener("click", () => prettyEditorState.overwrite("clear"));
 
 document
   .getElementById("prettifyButton")
-  ?.addEventListener("click", () => Editor.overwrite("pretty"));
+  ?.addEventListener("click", () => prettyEditorState.overwrite("pretty"));
 
 document
   .getElementById("linearizeButton")
-  ?.addEventListener("click", () => Editor.overwrite("linear"));
+  ?.addEventListener("click", () => prettyEditorState.overwrite("linear"));
 
 document
   .getElementById("unescapeButton")
-  ?.addEventListener("click", () => Editor.overwrite("unescape"));
+  ?.addEventListener("click", () => prettyEditorState.overwrite("unescape"));
 
 document
   .getElementById("escapeButton")
-  ?.addEventListener("click", () => Editor.overwrite("escape"));
+  ?.addEventListener("click", () => prettyEditorState.overwrite("escape"));
