@@ -12,35 +12,59 @@
 </head>
 
 <body>
-    <!-- As a heading -->
-    <nav class="navbar justify-content-center">
-        <span class="navbar-brand mb-0">PrettyJSON</span>
-        <em class="navbar-text">Instantly lint, format, escape, unescape &amp; validate your JSON online.</em>
-    </nav>
+    <header class="container">
+        <div class="navbar justify-content-center">
+            <span class="navbar-brand fw-semibold">PrettyJSON</span>
+            <em class="navbar-text fw-semibold"> - online JSON tools</em>
+        </div>
+        <!-- TODO: add the other sections -->
+        <!-- <div class="row"> -->
+        <!--     <nav class="navbar navbar-expand-lg justify-content-center"> -->
+        <!--         <ul class="navbar-nav"> -->
+        <!--             <li class="nav-item"> -->
+        <!--                 <a class="nav-link link-secondary" href="#prettyEditor">Prettify &amp; Lint</a> -->
+        <!--             </li> -->
+        <!--             <li class="nav-item"> -->
+        <!--                 <a class="nav-link link-secondary" href="#prettyEditor">Validate Schema</a> -->
+        <!--             </li> -->
+        <!--         </ul> -->
+        <!--     </nav> -->
+        <!-- </div> -->
+    </header>
+
+    <div class="px-3">
+        <hr>
+    </div>
 
 
     <main style="padding: 1.5rem 10%;">
 
-        <blockquote>Paste or type your JSON snipet below, and let PrettyJSON lint and prettify it.</blockquote>
+        <section id="prettyEditor">
 
-        <div id="editorParent">
-            <button id="copyButton" class="btn btn-secondary btn-sm" title="Copy to clipboard">
-                <svg width="20" height="20" class="px-1 py-1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="currentColor" stroke="currentColor"
-                        d="M448 0H224C188.7 0 160 28.65 160 64v224c0 35.35 28.65 64 64 64h224c35.35 0 64-28.65 64-64V64C512 28.65 483.3 0 448 0zM464 288c0 8.822-7.178 16-16 16H224C215.2 304 208 296.8 208 288V64c0-8.822 7.178-16 16-16h224c8.822 0 16 7.178 16 16V288zM304 448c0 8.822-7.178 16-16 16H64c-8.822 0-16-7.178-16-16V224c0-8.822 7.178-16 16-16h64V160H64C28.65 160 0 188.7 0 224v224c0 35.35 28.65 64 64 64h224c35.35 0 64-28.65 64-64v-64h-48V448z">
-                    </path>
-                </svg>
-            </button>
-        </div>
-        <div id="lineColumn" class="p-2"></div>
+            <p>Instantly lint, format, escape, unescape &amp; validate your JSON online.</p>
+            <p>Paste or type your JSON snipet below, and let PrettyJSON lint and prettify it.</p>
 
-        <p>
-            <button id="prettifyButton" class="btn btn-success">Prettify</button>
-            <button id="clearButton" class="btn btn-secondary">Clear</button>
-            <button id="linearizeButton" class="btn btn-secondary">Linearize</button>
-            <button id="escapeButton" class="btn btn-secondary">Escape</button>
-            <button id="unescapeButton" class="btn btn-secondary">Unescape</button>
-        </p>
+            <div id="editorParent">
+                <button id="copyButton" class="btn btn-secondary btn-sm" title="Copy to clipboard">
+                    <svg width="20" height="20" class="px-1 py-1" viewBox="0 0 512 512"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill="currentColor" stroke="currentColor"
+                            d="M448 0H224C188.7 0 160 28.65 160 64v224c0 35.35 28.65 64 64 64h224c35.35 0 64-28.65 64-64V64C512 28.65 483.3 0 448 0zM464 288c0 8.822-7.178 16-16 16H224C215.2 304 208 296.8 208 288V64c0-8.822 7.178-16 16-16h224c8.822 0 16 7.178 16 16V288zM304 448c0 8.822-7.178 16-16 16H64c-8.822 0-16-7.178-16-16V224c0-8.822 7.178-16 16-16h64V160H64C28.65 160 0 188.7 0 224v224c0 35.35 28.65 64 64 64h224c35.35 0 64-28.65 64-64v-64h-48V448z">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <div id="lineColumn" class="p-2"></div>
+
+            <p>
+                <button id="prettifyButton" class="btn btn-success">Prettify</button>
+                <button id="clearButton" class="btn btn-secondary">Clear</button>
+                <button id="linearizeButton" class="btn btn-secondary">Linearize</button>
+                <button id="escapeButton" class="btn btn-secondary">Escape</button>
+                <button id="unescapeButton" class="btn btn-secondary">Unescape</button>
+            </p>
+
+        </section>
 
     </main>
 
