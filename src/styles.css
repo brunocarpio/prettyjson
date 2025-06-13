@@ -24,6 +24,10 @@
   margin-bottom: 1.5em;
 }
 
+#editorParent {
+  cursor: text;
+}
+
 .cm-json-error {
   content: url("https://www.svgrepo.com/show/288043/no-fire.svg");
 }
