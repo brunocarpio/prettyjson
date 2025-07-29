@@ -245,8 +245,12 @@ function main() {
   let editorParent = document.getElementById("editorParent");
   if (!editorParent) return;
 
+  let initialDoc = JSON.stringify({"user":"Jhon Doe","editor":"codemirror","status":"🫠","feeling": "awesome","next_step":"replace_me"}, null, 2);
+
   let editorView = new EditorView({
     state: EditorState.create({
+      doc: initialDoc,
+      selection: {anchor: initialDoc.length, head: initialDoc.length},
       extensions: [
         basicSetup,
         EditorView.lineWrapping,
@@ -264,6 +268,8 @@ function main() {
     }),
     parent: editorParent,
   });
+
+  editorView.focus();
 
   state.editorView = editorView;
 }
