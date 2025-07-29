@@ -16,6 +16,10 @@
   min-height: 200px;
 }
 
+.cm-search {
+  font-size: large;
+}
+
 #copyButton {
   position: absolute;
   z-index: 1;
