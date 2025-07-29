@@ -2,14 +2,18 @@
   position: relative;
   resize: vertical;
   overflow: auto;
+  min-height: 200px;
+  max-height: 450px;
 }
+
 .a-demo-cm6 .cm-editor {
   height: 100%;
   max-height: 450px;
 }
+
 .a-demo-cm6 .cm-gutter,
-.a-demo-cm6 .cm-contnet {
-  min-height: 340px;
+.a-demo-cm6 .cm-content {
+  min-height: 200px;
 }
 
 #copyButton {
