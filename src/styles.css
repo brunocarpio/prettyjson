@@ -25,3 +25,11 @@
 .cm-json-error {
   content: url("https://www.svgrepo.com/show/288043/no-fire.svg");
 }
+
+section {
+  display: none;
+
+  &:target {
+    display: block;
+  }
+}
