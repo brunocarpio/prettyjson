@@ -9,6 +9,7 @@ import {
 import { githubDark } from "@ddietr/codemirror-themes/theme/github-dark";
 import { githubLight } from "@ddietr/codemirror-themes/theme/github-light";
 import { basicSetup, EditorView } from "codemirror";
+import {syntaxErrorListener} from "./commonExtensions.mts";
 
 interface State {
   editorView: EditorView | null;
@@ -209,34 +210,6 @@ function unescape(content: string, from: number, to: number): void {
   });
 }
 
-function syntaxErrorListener(): Extension {
-  return EditorView.updateListener.of(async (update: ViewUpdate) => {
-    if (diagnosticCount(update.state) === 0) return;
-
-    let alertParent = document.querySelector(
-      "div.cm-panel.cm-panel-lint",
-    )! as HTMLDivElement;
-
-    if (!alertParent) return;
-
-    if (update.state.doc.toString() === "") {
-      alertParent.style.display = "none";
-    } else {
-      alertParent.querySelector("button")!.style.display = "none";
-      alertParent.classList.add("alert", "alert-danger");
-      let li = alertParent.querySelector("li")!;
-      li.style.background = "none";
-    }
-
-    let errorMarker = document.querySelector(
-      "div.cm-lint-marker.cm-lint-marker-error",
-    ) as HTMLDivElement;
-    if (errorMarker) {
-      errorMarker.classList.replace("cm-lint-marker-error", "cm-json-error");
-    }
-  });
-}
-
 function lineColumnListener(): Extension {
   return EditorView.updateListener.of(async (update: ViewUpdate) => {
     let lineColumn = document.getElementById("lineColumn");
@@ -253,7 +226,7 @@ function lineColumnListener(): Extension {
 }
 
 function main() {
-  let editorParent = document.getElementById("editorParent");
+  let editorParent = document.getElementById("prettyEditorParent");
   if (!editorParent) return;
 
   let initialDoc = JSON.stringify({"user":"Jhon Doe","editor":"codemirror","status":"🫠","feeling": "awesome","next_step":"replace_me"}, null, 2);
@@ -269,10 +242,10 @@ function main() {
         highlightTrailingWhitespace(),
         json(),
         state.theme.of(githubLight),
-        linter(jsonParseLinter(), { delay: 250, autoPanel: true }),
+        linter(jsonParseLinter(), {delay: 250, autoPanel: true}),
         lintGutter(),
         placeholder("Enter your JSON"),
-        syntaxErrorListener(),
+        syntaxErrorListener(editorParent),
         lineColumnListener(),
         byteSizeListener(),
       ],
