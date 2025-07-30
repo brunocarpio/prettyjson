@@ -101,11 +101,22 @@ function fixedHeight(): Extension {
   return EditorView.theme({
     "&": {
       "font-size": "1rem",
+      "height": "100%",
+      "max-height": "450px",
     },
     ".cm-scroller": {
-      overflow: "auto",
+      "overflow": "auto",
       "scrollbar-width": "thin",
     },
+    ".cm-gutter": {
+      "min-height": "200px"
+    },
+    ".cm-content": {
+      "min-height": "200px"
+    },
+    ".cm-search": {
+      "font-size": "large",
+    }
   });
 }
 
