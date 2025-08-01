@@ -103,7 +103,7 @@ function fixedHeight(): Extension {
     "&": {
       "font-size": "1rem",
       "height": "100%",
-      "max-height": "450px",
+      "max-height": "800px",
     },
     ".cm-scroller": {
       "overflow": "auto",
