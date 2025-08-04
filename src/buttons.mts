@@ -1,4 +1,5 @@
 import { state as prettyEditorState } from "./prettyEditor.mts";
+import { state as schemaEditorState } from "./schemaValidator.mts";
 
 document.getElementById("copyButton")?.addEventListener("click", () => {
   navigator.clipboard.writeText(prettyEditorState.getDocString());
@@ -23,3 +24,7 @@ document
 document
   .getElementById("escapeButton")
   ?.addEventListener("click", () => prettyEditorState.overwrite("escape"));
+
+document
+  .getElementById("validateButton")
+  ?.addEventListener("click", () => schemaEditorState.showAlert())

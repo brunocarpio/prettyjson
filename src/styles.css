@@ -9,14 +9,27 @@ body {
 main {
   overflow-y: auto;
   overflow-x: visible;
+  padding: 0 2%;
 }
 
-#prettyEditorParent {
+section {
+  display: none;
+
+  &:target {
+    display: block;
+  }
+}
+
+.editorParent {
   position: relative;
   resize: vertical;
   overflow: auto;
   min-height: 200px;
-  max-height: 800px;
+  max-height: 600px;
+}
+
+.cm-json-error {
+  content: url("https://www.svgrepo.com/show/288043/no-fire.svg");
 }
 
 #copyButton {
@@ -29,20 +42,4 @@ main {
 #lineColumn {
   height: 30px;
   margin-bottom: 1.5em;
-}
-
-#editorParent {
-  cursor: text;
-}
-
-.cm-json-error {
-  content: url("https://www.svgrepo.com/show/288043/no-fire.svg");
-}
-
-section {
-  display: none;
-
-  &:target {
-    display: block;
-  }
 }

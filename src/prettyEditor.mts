@@ -9,14 +9,14 @@ import {
 import { githubDark } from "@ddietr/codemirror-themes/theme/github-dark";
 import { githubLight } from "@ddietr/codemirror-themes/theme/github-light";
 import { basicSetup, EditorView } from "codemirror";
-import {syntaxErrorListener} from "./commonExtensions.mts";
+import {fixedHeight, syntaxErrorListener} from "./commonExtensions.mts";
 
 interface State {
   editorView: EditorView | null;
   theme: Compartment;
-  overwrite: Function;
-  getDocString: Function;
-  toDarkTheme: Function;
+  overwrite: (option: string) => void ;
+  getDocString: () => string;
+  toDarkTheme: (isDark: boolean) => void;
 }
 
 export let state: State = {
@@ -52,8 +52,9 @@ function toDarkTheme(isDark: boolean): void {
   });
 }
 
-function getDocString(): string | undefined {
-  return state.editorView?.state.doc.toString();
+function getDocString(): string {
+  if (!state.editorView) return "";
+  return state.editorView.state.doc.toString();
 }
 
 function overwrite(option: string): void {
@@ -96,29 +97,6 @@ function overwrite(option: string): void {
     default:
       break;
   }
-}
-
-function fixedHeight(): Extension {
-  return EditorView.theme({
-    "&": {
-      "font-size": "1rem",
-      "height": "100%",
-      "max-height": "800px",
-    },
-    ".cm-scroller": {
-      "overflow": "auto",
-      "scrollbar-width": "thin",
-    },
-    ".cm-gutter": {
-      "min-height": "200px"
-    },
-    ".cm-content": {
-      "min-height": "200px"
-    },
-    ".cm-search": {
-      "font-size": "large",
-    }
-  });
 }
 
 function prettify(content: string, from: number, to: number): void {
