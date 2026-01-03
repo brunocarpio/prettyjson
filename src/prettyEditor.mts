@@ -9,12 +9,12 @@ import {
 import { githubDark } from "@ddietr/codemirror-themes/theme/github-dark";
 import { githubLight } from "@ddietr/codemirror-themes/theme/github-light";
 import { basicSetup, EditorView } from "codemirror";
-import {fixedHeight, syntaxErrorListener} from "./commonExtensions.mts";
+import { fixedHeight, syntaxErrorListener } from "./commonExtensions.mts";
 
 interface State {
   editorView: EditorView | null;
   theme: Compartment;
-  overwrite: (option: string) => void ;
+  overwrite: (option: string) => void;
   getDocString: () => string;
   toDarkTheme: (isDark: boolean) => void;
 }
@@ -204,15 +204,25 @@ function lineColumnListener(): Extension {
 }
 
 function main() {
-  let editorParent = document.getElementById("prettyEditorParent");
+  const editorParent = document.getElementById("prettyEditorParent");
   if (!editorParent) return;
 
-  let initialDoc = JSON.stringify({"user":"Jhon Doe","editor":"codemirror","status":"🫠","feeling": "awesome","next_step":"replace_me"}, null, 2);
+  const initialDoc = JSON.stringify(
+    {
+      user: "Jhon Doe",
+      editor: "codemirror",
+      status: "🫠",
+      feeling: "awesome",
+      next_step: "replace_me",
+    },
+    null,
+    2,
+  );
 
-  let editorView = new EditorView({
+  const editorView = new EditorView({
     state: EditorState.create({
       doc: initialDoc,
-      selection: {anchor: initialDoc.length, head: initialDoc.length},
+      selection: { anchor: initialDoc.length, head: initialDoc.length },
       extensions: [
         basicSetup,
         EditorView.lineWrapping,
@@ -220,7 +230,7 @@ function main() {
         highlightTrailingWhitespace(),
         json(),
         state.theme.of(githubLight),
-        linter(jsonParseLinter(), {delay: 250, autoPanel: true}),
+        linter(jsonParseLinter(), { delay: 250, autoPanel: true }),
         lintGutter(),
         placeholder("Enter your JSON"),
         syntaxErrorListener(editorParent),

@@ -1,108 +1,170 @@
 <!doctype html>
 <html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/green_circle.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      PrettyJSON: Instantly lint, format, escape, unescape and validate your
+      JSON online.
+    </title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="src/styles.css" type="text/css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/green_circle.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PrettyJSON: Instantly lint, format, escape, unescape and validate your JSON online.</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-  <link rel="stylesheet" href="src/styles.css" type="text/css">
-</head>
-
-<body>
-  <header class="container">
-    <div class="navbar justify-content-center">
-      <span class="navbar-brand fw-semibold">PrettyJSON</span>
-      <em class="navbar-text fw-semibold"> - online JSON tools</em>
-    </div>
-    <!-- TODO: add the other sections -->
-    <div class="row">
-      <nav class="navbar navbar-expand-lg justify-content-center py-0">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link link-secondary" href="#prettyEditor">Prettify &amp; Lint</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link link-secondary" href="#validateSchema">Validate Schema</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <div class="px-3">
-    <hr>
-  </div>
-
-
-  <main>
-
-    <section id="prettyEditor">
-
-      <p>Instantly lint, format, escape, unescape &amp; validate your JSON online.</p>
-      <p>Paste or type your JSON snipet below, and let PrettyJSON lint and prettify it.</p>
-
-      <div id="prettyEditorParent" class="editorParent">
-        <button id="copyButton" class="btn btn-secondary btn-sm" title="Copy to clipboard">
-          <svg width="20" height="20" class="px-1 py-1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-            <path fill="currentColor" stroke="currentColor"
-              d="M448 0H224C188.7 0 160 28.65 160 64v224c0 35.35 28.65 64 64 64h224c35.35 0 64-28.65 64-64V64C512 28.65 483.3 0 448 0zM464 288c0 8.822-7.178 16-16 16H224C215.2 304 208 296.8 208 288V64c0-8.822 7.178-16 16-16h224c8.822 0 16 7.178 16 16V288zM304 448c0 8.822-7.178 16-16 16H64c-8.822 0-16-7.178-16-16V224c0-8.822 7.178-16 16-16h64V160H64C28.65 160 0 188.7 0 224v224c0 35.35 28.65 64 64 64h224c35.35 0 64-28.65 64-64v-64h-48V448z">
-            </path>
-          </svg>
-        </button>
+  <body>
+    <header class="container">
+      <div class="navbar justify-content-center">
+        <span class="navbar-brand fw-semibold">PrettyJSON</span>
+        <em class="navbar-text fw-semibold"> - online JSON tools</em>
       </div>
-      <div class="p-2">
-        <span id="lineColumn"></span> |
-        <span id="byteSize"></span>
+      <!-- TODO: add the other sections -->
+      <div class="row">
+        <nav class="navbar navbar-expand-lg justify-content-center py-0">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link link-secondary" href="#prettyEditor"
+                >Prettify &amp; Lint</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link link-secondary" href="#validateSchema"
+                >Validate Schema</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link link-secondary" href="#transformJson"
+                >Transform JSON</a
+              >
+            </li>
+          </ul>
+        </nav>
       </div>
+    </header>
 
-      <p>
-        <button id="prettifyButton" class="btn btn-success">Prettify</button>
-        <button id="linearizeButton" class="btn btn-secondary">Linearize</button>
-        <button id="escapeButton" class="btn btn-secondary">Escape</button>
-        <button id="unescapeButton" class="btn btn-secondary">Unescape</button>
-        <button id="clearButton" class="btn btn-danger">Clear</button>
+    <div class="px-3">
+      <hr />
+    </div>
+
+    <main>
+      <section id="prettyEditor">
+        <p>
+          Instantly lint, format, escape, unescape &amp; validate your JSON
+          online.
+        </p>
+        <p>
+          Paste or type your JSON snipet below, and let PrettyJSON lint and
+          prettify it.
+        </p>
+
+        <div id="prettyEditorParent" class="editorParent">
+          <button
+            id="copyButton"
+            class="btn btn-secondary btn-sm"
+            title="Copy to clipboard"
+          >
+            <svg
+              width="20"
+              height="20"
+              class="px-1 py-1"
+              viewBox="0 0 512 512"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill="currentColor"
+                stroke="currentColor"
+                d="M448 0H224C188.7 0 160 28.65 160 64v224c0 35.35 28.65 64 64 64h224c35.35 0 64-28.65 64-64V64C512 28.65 483.3 0 448 0zM464 288c0 8.822-7.178 16-16 16H224C215.2 304 208 296.8 208 288V64c0-8.822 7.178-16 16-16h224c8.822 0 16 7.178 16 16V288zM304 448c0 8.822-7.178 16-16 16H64c-8.822 0-16-7.178-16-16V224c0-8.822 7.178-16 16-16h64V160H64C28.65 160 0 188.7 0 224v224c0 35.35 28.65 64 64 64h224c35.35 0 64-28.65 64-64v-64h-48V448z"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <div class="p-2">
+          <span id="lineColumn"></span> |
+          <span id="byteSize"></span>
+        </div>
+
+        <p>
+          <button id="prettifyButton" class="btn btn-success">Prettify</button>
+          <button id="linearizeButton" class="btn btn-secondary">
+            Linearize
+          </button>
+          <button id="escapeButton" class="btn btn-secondary">Escape</button>
+          <button id="unescapeButton" class="btn btn-secondary">
+            Unescape
+          </button>
+          <button id="clearButton" class="btn btn-danger">Clear</button>
+        </p>
+      </section>
+
+      <section id="validateSchema">
+        <div class="row justify-content-center">
+          <div class="col-5">
+            <p>JSON Schema</p>
+            <div id="schemaParent" class="editorParent"></div>
+          </div>
+          <div class="col-1 text-center align-self-center">
+            <button id="validateButton" class="btn btn-secondary">
+              Validate
+            </button>
+          </div>
+          <div class="col-5">
+            <p>Input JSON</p>
+            <div id="testJsonParent" class="editorParent"></div>
+          </div>
+        </div>
+        <div id="validateAlert" class="my-4 alert"></div>
+      </section>
+
+      <section id="transformJson">
+        <div class="row justify-content-center">
+          <div class="col-4">
+            <p>Source JSON</p>
+            <div id="sourceJsonContainer" class="editorParent"></div>
+          </div>
+          <div class="col-4">
+            <p>Mapping Transformation</p>
+            <div id="mappingJsonContainer" class="editorParent"></div>
+          </div>
+          <div class="col-4">
+            <p>Resulting JSON</p>
+            <div id="resultJsonContainer" class="editorParent"></div>
+          </div>
+        </div>
+      </section>
+
+      <p class="my-4">
+        Note: The editor allows using Ctrl-z for undoing and Ctrl-Shift-z for
+        redoing!
+      </p>
+    </main>
+
+    <footer class="px-3">
+      <hr />
+      <p class="text-muted">
+        <strong>PrettyJSON</strong> &mdash; make your data readable.
       </p>
 
-    </section>
+      <p class="text-muted">
+        All processing happens <em>100&nbsp;% client-side</em>. No data ever
+        leaves your browser.
+      </p>
 
-    <section id="validateSchema">
-      <div class="row justify-content-center">
-        <div class="col-5">
-          <p>JSON Schema</p>
-          <div id="schemaParent" class="editorParent"></div>
-        </div>
-        <div class="col-1 text-center align-self-center">
-          <button id="validateButton" class="btn btn-secondary">Validate</button>
-        </div>
-        <div class="col-5">
-          <p>Input JSON</p>
-          <div id="testJsonParent" class="editorParent"></div>
-        </div>
-      </div>
-      <div id="validateAlert" class="my-4 alert"></div>
-    </section>
+      <p>
+        <a target="_blank" href="https://github.com/brunocarpio/prettyjson"
+          ><img src="/github.svg"
+        /></a>
+      </p>
+    </footer>
 
-    <p class="my-4">Note: The editor allows using Ctrl-z for undoing and Ctrl-Shift-z for redoing!</p>
-
-  </main>
-
-
-  <footer class="px-3">
-    <hr>
-    <p class="text-muted"><strong>PrettyJSON</strong> &mdash; make your data readable.</p>
-
-    <p class="text-muted">All processing happens <em>100&nbsp;% client-side</em>. No data ever leaves your browser.</p>
-
-    <p><a target="_blank" href="https://github.com/brunocarpio/prettyjson"><img src="/github.svg"/></a></p>
-  </footer>
-
-  <script defer type="module" src="/src/prettyEditor.mts"></script>
-  <script defer type="module" src="/src/mediaListener.mts"></script>
-  <script defer type="module" src="/src/buttons.mts"></script>
-  <script defer type="module" src="/src/schemaValidator.mts"></script>
-</body>
-
+    <script defer type="module" src="/src/prettyEditor.mts"></script>
+    <script defer type="module" src="/src/mediaListener.mts"></script>
+    <script defer type="module" src="/src/buttons.mts"></script>
+    <script defer type="module" src="/src/schemaValidator.mts"></script>
+    <script defer type="module" src="/src/jsonTransformation.mts"></script>
+  </body>
 </html>

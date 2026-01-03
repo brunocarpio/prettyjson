@@ -1,7 +1,7 @@
-import {diagnosticCount} from "@codemirror/lint";
-import {Extension} from "@codemirror/state";
-import {ViewUpdate} from "@codemirror/view";
-import {EditorView} from "codemirror";
+import { diagnosticCount } from "@codemirror/lint";
+import { Extension } from "@codemirror/state";
+import { ViewUpdate } from "@codemirror/view";
+import { EditorView } from "codemirror";
 
 export function syntaxErrorListener(editorParent: HTMLElement): Extension {
   return EditorView.updateListener.of(async (update: ViewUpdate) => {
@@ -35,21 +35,21 @@ export function fixedHeight(): Extension {
   return EditorView.theme({
     "&": {
       "font-size": "1rem",
-      "height": "100%",
+      height: "100%",
       "max-height": "600px",
     },
     ".cm-scroller": {
-      "overflow": "auto",
+      overflow: "auto",
       "scrollbar-width": "thin",
     },
     ".cm-gutter": {
-      "min-height": "200px"
+      "min-height": "200px",
     },
     ".cm-content": {
-      "min-height": "200px"
+      "min-height": "200px",
     },
     ".cm-search": {
       "font-size": "large",
-    }
+    },
   });
 }
