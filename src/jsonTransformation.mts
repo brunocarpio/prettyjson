@@ -82,6 +82,7 @@ function main() {
   state.rEditor = new EditorView({
     state: EditorState.create({
       extensions: [
+        EditorState.readOnly.of(true),
         basicSetup,
         fixedHeight(),
         json(),

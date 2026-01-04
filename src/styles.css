@@ -43,3 +43,7 @@ section {
   height: 30px;
   margin-bottom: 1.5em;
 }
+
+#resultJsonContainer .cm-cursorLayer {
+  animation: none !important;
+}
