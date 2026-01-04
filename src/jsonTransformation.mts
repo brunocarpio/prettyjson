@@ -6,7 +6,6 @@ import { basicSetup, EditorView } from "codemirror";
 import { fixedHeight, syntaxErrorListener } from "./commonExtensions.mts";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { linter } from "@codemirror/lint";
-import { javascript } from "@codemirror/lang-javascript";
 
 interface State {
   sEditor: EditorView | null;
@@ -75,12 +74,7 @@ function main() {
 
   state.mEditor = new EditorView({
     state: EditorState.create({
-      extensions: [
-        basicSetup,
-        fixedHeight(),
-        javascript(),
-        state.theme.of(githubLight),
-      ],
+      extensions: [basicSetup, fixedHeight(), state.theme.of(githubLight)],
     }),
     parent: mappingJsonContainer,
   });
