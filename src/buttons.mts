@@ -1,5 +1,6 @@
 import { state as prettyEditorState } from "./prettyEditor.mts";
 import { state as schemaEditorState } from "./schemaValidator.mts";
+import { state as jqFilterState } from "./jsonTransformation.mts";
 
 document.getElementById("copyButton")?.addEventListener("click", () => {
   navigator.clipboard.writeText(prettyEditorState.getDocString());
@@ -27,4 +28,8 @@ document
 
 document
   .getElementById("validateButton")
-  ?.addEventListener("click", () => schemaEditorState.showAlert())
+  ?.addEventListener("click", () => schemaEditorState.showAlert());
+
+document
+  .getElementById("applyFilter")
+  ?.addEventListener("click", () => jqFilterState.applyFilter());

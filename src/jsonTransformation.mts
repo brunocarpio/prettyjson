@@ -6,6 +6,8 @@ import { basicSetup, EditorView } from "codemirror";
 import { fixedHeight, syntaxErrorListener } from "./commonExtensions.mts";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { linter } from "@codemirror/lint";
+import { getJsonFromEditorView, getStringFromEditorView } from "./lib.mts";
+import { run } from "node-jq";
 
 interface State {
   sEditor: EditorView | null;
@@ -13,6 +15,7 @@ interface State {
   rEditor: EditorView | null;
   theme: Compartment;
   toDarkTheme: (isDark: boolean) => void;
+  applyFilter: () => void;
 }
 
 export const state: State = {
@@ -21,7 +24,17 @@ export const state: State = {
   rEditor: null,
   theme: new Compartment(),
   toDarkTheme,
+  applyFilter,
 };
+
+async function applyFilter(): Promise<void> {
+  const input = getJsonFromEditorView(state.sEditor);
+  if (!input) return;
+  const filter = getStringFromEditorView(state.mEditor);
+  if (!filter) return;
+  const result = await run(filter, input, { input: "json" });
+  console.log(result);
+}
 
 function toDarkTheme(isDark: boolean): void {
   if (!EditorView) return;
@@ -46,10 +59,24 @@ function main() {
 
   const initialSourceDoc = JSON.stringify(
     {
-      product: {
-        id: "QL-54905",
-        SKU: "123",
-        price: "USD 500",
+      widget: {
+        debug: "on",
+        window: {
+          title: "Sample Konfabulator Widget",
+          name: "main_window",
+          width: 500,
+          height: 500,
+        },
+        image: {
+          src: "Images/Sun.png",
+          name: "sun1",
+        },
+        text: {
+          data: "Click Here",
+          size: 36,
+          style: "bold",
+          name: "text1",
+        },
       },
     },
     null,
@@ -72,8 +99,11 @@ function main() {
     parent: sourceJsonContainer,
   });
 
+  const initialQuery = ".widget | keys";
+
   state.mEditor = new EditorView({
     state: EditorState.create({
+      doc: initialQuery,
       extensions: [basicSetup, fixedHeight(), state.theme.of(githubLight)],
     }),
     parent: mappingJsonContainer,

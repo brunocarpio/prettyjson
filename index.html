@@ -38,9 +38,7 @@
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link link-secondary" href="#transformJson"
-                >Transform JSON</a
-              >
+              <a class="nav-link link-secondary" href="#jqFilter">JQ filter</a>
             </li>
           </ul>
         </nav>
@@ -120,14 +118,19 @@
         <div id="validateAlert" class="my-4 alert"></div>
       </section>
 
-      <section id="transformJson">
+      <section id="jqFilter">
         <div class="row justify-content-center">
           <div class="col-4">
             <p>Source JSON</p>
             <div id="sourceJsonContainer" class="editorParent"></div>
           </div>
           <div class="col-4">
-            <p>JQ Query</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span>JQ Query</span>
+              <button class="btn btn-secondary btn-sm" id="applyFilter">
+                Apply Filter
+              </button>
+            </div>
             <div id="mappingJsonContainer" class="editorParent"></div>
           </div>
           <div class="col-4">
