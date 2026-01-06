@@ -5,11 +5,10 @@ export default defineConfig({
   build: {
     outDir: "../dist",
     emptyOutDir: true,
+    minify: "esbuild",
+    sourcemap: false,
   },
   server: {
     https: false,
-    proxy: {
-      "/api": "http://localhost:3000",
-    },
   },
 });
