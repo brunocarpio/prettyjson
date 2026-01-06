@@ -3,7 +3,6 @@ import ViteExpress from "vite-express";
 import { run } from "node-jq";
 
 const app = express();
-const PORT = 3000;
 
 app.use(express.json());
 app.set("json spaces", 2);
@@ -22,6 +21,8 @@ app.post("/api/jq", async (req, res) => {
   res.json(filtered);
 });
 
-ViteExpress.listen(app, PORT, () => {
-  console.log(`API server running on http://localhost:${PORT}`);
-});
+const server = app.listen(3000, "0.0.0.0", () =>
+  console.log("Server is listening ..."),
+);
+
+ViteExpress.bind(app, server);
