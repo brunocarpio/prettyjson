@@ -7,7 +7,6 @@ import { fixedHeight, syntaxErrorListener } from "./commonExtensions.mts";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { linter } from "@codemirror/lint";
 import { getJsonFromEditorView, getStringFromEditorView } from "./lib.mts";
-import { run } from "node-jq";
 
 interface State {
   sEditor: EditorView | null;
@@ -32,8 +31,6 @@ async function applyFilter(): Promise<void> {
   if (!input) return;
   const filter = getStringFromEditorView(state.mEditor);
   if (!filter) return;
-  const result = await run(filter, input, { input: "json" });
-  console.log(result);
 }
 
 function toDarkTheme(isDark: boolean): void {
