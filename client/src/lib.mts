@@ -52,3 +52,16 @@ export function getJsonFromEditorView(e: EditorView | null): Json | null {
     return null;
   }
 }
+
+export function setObjectContentToEditorView(
+  e: EditorView | null,
+  content: object,
+): void {
+  e?.dispatch({
+    changes: {
+      from: 0,
+      to: e.state.doc.length,
+      insert: JSON.stringify(content, null, 2),
+    },
+  });
+}

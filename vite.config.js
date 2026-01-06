@@ -7,6 +7,7 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
+    https: false,
     proxy: {
       "/api": "http://localhost:3000",
     },

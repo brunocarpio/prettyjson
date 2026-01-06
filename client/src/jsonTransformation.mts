@@ -6,7 +6,11 @@ import { basicSetup, EditorView } from "codemirror";
 import { fixedHeight, syntaxErrorListener } from "./commonExtensions.mts";
 import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { linter } from "@codemirror/lint";
-import { getJsonFromEditorView, getStringFromEditorView } from "./lib.mts";
+import {
+  getObjectFromEditorView,
+  getStringFromEditorView,
+  setObjectContentToEditorView,
+} from "./lib.mts";
 
 interface State {
   sEditor: EditorView | null;
@@ -27,10 +31,37 @@ export const state: State = {
 };
 
 async function applyFilter(): Promise<void> {
-  const input = getJsonFromEditorView(state.sEditor);
+  const input = getObjectFromEditorView(state.sEditor);
   if (!input) return;
   const filter = getStringFromEditorView(state.mEditor);
   if (!filter) return;
+
+  const url = "http://localhost:3000/api/jq";
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        filter,
+        sourceJson: input,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    setObjectContentToEditorView(state.rEditor, result);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    } else {
+      console.error("An unknown error occurred");
+    }
+  }
 }
 
 function toDarkTheme(isDark: boolean): void {

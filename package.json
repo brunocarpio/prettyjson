@@ -19,6 +19,7 @@
     "ajv-formats": "^3.0.1",
     "codemirror": "^6.0.2",
     "express": "^5.2.1",
+    "node-jq": "^6.3.1",
     "vite-express": "^0.21.1"
   },
   "devDependencies": {
