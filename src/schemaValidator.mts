@@ -9,6 +9,7 @@ import { linter } from "@codemirror/lint";
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
+import { getObjectFromEditorView } from "./lib.mts";
 
 const ajv = new Ajv({ allErrors: false });
 addFormats(ajv);
@@ -31,28 +32,10 @@ export const state: State = {
   errorMessages: null,
 };
 
-function getJson(e: EditorView | null): any {
-  try {
-    if (e) {
-      let d = e.state.doc.toString();
-      if (d === "") {
-        return null;
-      }
-      let j = JSON.parse(d);
-      return j;
-    } else {
-      return null;
-    }
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-}
-
 function validateSchema(): boolean {
   try {
-    let sj = getJson(state.sEditor);
-    let jj = getJson(state.jEditor);
+    let sj = getObjectFromEditorView(state.sEditor);
+    let jj = getObjectFromEditorView(state.jEditor);
     if (!sj) return false;
     let v = ajv.compile(sj);
     let isValid = v(jj);
