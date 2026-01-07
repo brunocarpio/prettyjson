@@ -45,11 +45,10 @@ jobs:
           ssh -i deploy_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
             cd ${{env.DEPLOY_DIR}}
             npm ci --omit=dev
-            npm run build
 
             # Restart or start PM2 process using the app name variable
 
-            pm2 restart ${{env.APP_NAME}} --update-env --env production || \
+            pm2 restart ${{env.APP_NAME}} --update-env || \
               NODE_ENV=production pm2 start "npm run start" --name ${{env.APP_NAME}}
 
             pm2 save
