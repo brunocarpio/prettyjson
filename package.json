@@ -1,7 +1,6 @@
 {
   "name": "prettyjson",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "dev": "ts-node server/src/server.ts",
     "build:client": "vite build",
