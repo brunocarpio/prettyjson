@@ -1,0 +1,53 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      APP_NAME: "prettyjson"
+      DEPLOY_DIR: "/var/www/prettyjson"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies & build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy to server via SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          echo "$DEPLOY_KEY" > deploy_key
+          chmod 600 deploy_key
+
+          # Sync files to the server
+          rsync -avz --delete \
+            -e "ssh -i deploy_key -o StrictHostKeyChecking=no" \
+            ./ $SERVER_USER@$SERVER_HOST:${{env.DEPLOY_DIR}}/
+
+          # Restart/reload the application on the server
+
+          ssh -i deploy_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
+            cd ${{env.DEPLOY_DIR}}
+            npm ci --omit=dev
+
+            # Restart or start PM2 process using the app name variable
+
+            pm2 restart ${{env.APP_NAME}} || pm2 start "node server/src/server.ts" --name ${{env.APP_NAME}}
+            pm2 save
+          EOF
