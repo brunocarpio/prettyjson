@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "ts-node server/src/server.ts",
     "build:client": "vite build",
-    "build:server": "tsc -p server/tsconfig.json",
+    "build:server": "tsc -p server",
     "build": "npm run build:client && npm run build:server",
     "start": "node server/dist/server.js"
   },
