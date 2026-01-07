@@ -48,6 +48,6 @@ jobs:
 
             # Restart or start PM2 process using the app name variable
 
-            pm2 restart ${{env.APP_NAME}} || pm2 start "node server/src/server.ts" --name ${{env.APP_NAME}}
+            pm2 restart ${{env.APP_NAME}} || pm2 start "npm run start" --name ${{env.APP_NAME}}
             pm2 save
           EOF

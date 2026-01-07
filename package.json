@@ -4,9 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "ts-node server/src/server.ts",
-    "build": "vite build",
-    "preview": "npm run build && ts-node server/src/server.ts",
-    "type-check": "tsc --noEmit"
+    "build:client": "vite build",
+    "build:server": "tsc -p server/tsconfig.json",
+    "build": "npm run build:client && npm run build:server",
+    "start": "node server/dist/server.js"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
