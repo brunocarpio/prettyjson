@@ -36,7 +36,7 @@ async function applyFilter(): Promise<void> {
   const filter = getStringFromEditorView(state.mEditor);
   if (!filter) return;
 
-  const url = "http://localhost:3000/api/jq";
+  const url = "/api/jq";
 
   try {
     const response = await fetch(url, {
