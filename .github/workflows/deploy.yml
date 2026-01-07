@@ -35,21 +35,25 @@ jobs:
           echo "$DEPLOY_KEY" > deploy_key
           chmod 600 deploy_key
 
-          # Sync files to the server
+          # Sync ONLY necessary files (exclude node_modules, source, etc.)
           rsync -avz --delete \
-            -e "ssh -i deploy_key -o StrictHostKeyChecking=no" \
-            ./ $SERVER_USER@$SERVER_HOST:${{env.DEPLOY_DIR}}/
+            --exclude 'node_modules' \
+            --exclude '.git' \
+            --exclude 'client/src' \
+            --exclude 'server/src' \
+            --exclude 'server/tsconfig.json' \
+            ./ $SERVER_USER@$SERVER_HOST:${{ env.DEPLOY_DIR }}/
 
-          # Restart/reload the application on the server
+          # On server: install only production deps and restart
+          ssh -i deploy_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << 'EOF'
+            cd ${{ env.DEPLOY_DIR }}
 
-          ssh -i deploy_key -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
-            cd ${{env.DEPLOY_DIR}}
+            # Clean install production dependencies only
             npm ci --omit=dev
 
-            # Restart or start PM2 process using the app name variable
-
-            pm2 restart ${{env.APP_NAME}} --update-env || \
-              NODE_ENV=production pm2 start "npm run start" --name ${{env.APP_NAME}}
+            # Restart app
+            pm2 restart ${{ env.APP_NAME }} --update-env || \
+              NODE_ENV=production pm2 start "node server/dist/server.js" --name ${{ env.APP_NAME }}
 
             pm2 save
           EOF
