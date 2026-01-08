@@ -1,10 +1,12 @@
 import { EditorView } from "codemirror";
 import { Json } from "node-jq/lib/options";
 
-export function getObjectFromEditorView(e: EditorView | null): object | null {
+export function getObjectFromEditorView(
+  editor: EditorView | null,
+): object | null {
   try {
-    if (e) {
-      let d = e.state.doc.toString();
+    if (editor) {
+      let d = editor.state.doc.toString();
       if (d === "") {
         return null;
       }
@@ -19,10 +21,12 @@ export function getObjectFromEditorView(e: EditorView | null): object | null {
   }
 }
 
-export function getStringFromEditorView(e: EditorView | null): string | null {
+export function getStringFromEditorView(
+  editor: EditorView | null,
+): string | null {
   try {
-    if (e) {
-      let d = e.state.doc.toString();
+    if (editor) {
+      let d = editor.state.doc.toString();
       if (d === "") {
         return null;
       }
@@ -36,10 +40,10 @@ export function getStringFromEditorView(e: EditorView | null): string | null {
   }
 }
 
-export function getJsonFromEditorView(e: EditorView | null): Json | null {
+export function getJsonFromEditorView(editor: EditorView | null): Json | null {
   try {
-    if (e) {
-      let d = e.state.doc.toString();
+    if (editor) {
+      let d = editor.state.doc.toString();
       if (d === "") {
         return null;
       }
@@ -54,14 +58,27 @@ export function getJsonFromEditorView(e: EditorView | null): Json | null {
 }
 
 export function setObjectContentToEditorView(
-  e: EditorView | null,
+  editor: EditorView | null,
   content: object,
 ): void {
-  e?.dispatch({
+  editor?.dispatch({
     changes: {
       from: 0,
-      to: e.state.doc.length,
+      to: editor.state.doc.length,
       insert: JSON.stringify(content, null, 2),
+    },
+  });
+}
+
+export function setStringContentToEditorView(
+  editor: EditorView | null,
+  content: string,
+): void {
+  editor?.dispatch({
+    changes: {
+      from: 0,
+      to: editor.state.doc.length,
+      insert: content,
     },
   });
 }

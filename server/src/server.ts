@@ -37,9 +37,14 @@ app.post("/api/jq", limiter, async (req, res) => {
       input: "json",
       output: "json",
     });
-    res.json(filtered);
+    if (typeof filtered !== "string") {
+      res.json(filtered);
+    } else {
+      res.send(filtered);
+    }
   } catch (err) {
     console.error(err);
+    res.json(err);
     res.status(500).json({ error: "Processing failed" });
   }
 });

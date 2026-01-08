@@ -10,6 +10,7 @@ import {
   getObjectFromEditorView,
   getStringFromEditorView,
   setObjectContentToEditorView,
+  setStringContentToEditorView,
 } from "./lib.mts";
 
 interface State {
@@ -52,12 +53,23 @@ async function applyFilter(): Promise<void> {
       throw new Error(`Response status: ${response.status}`);
     }
 
-    const result = await response.json();
-
-    setObjectContentToEditorView(state.rEditor, result);
+    const contentType = response.headers.get("content-type");
+    console.log(contentType);
+    switch (contentType) {
+      case "application/json; charset=utf-8":
+        setObjectContentToEditorView(state.rEditor, await response.json());
+        break;
+      case "text/html; charset=utf-8":
+        setStringContentToEditorView(state.rEditor, await response.text());
+        break;
+      default:
+        setStringContentToEditorView(state.rEditor, "");
+        break;
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);
+      setStringContentToEditorView(state.rEditor, error.message);
     } else {
       console.error("An unknown error occurred");
     }
