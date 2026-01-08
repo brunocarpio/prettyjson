@@ -4,10 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/green_circle.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      PrettyJSON: Instantly lint, format, escape, unescape and validate your
-      JSON online.
-    </title>
+    <title>Format, Validate, Escape, JQ & More Online - PrettyJSON.lat</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -20,7 +17,7 @@
   <body>
     <header class="container">
       <div class="navbar justify-content-center">
-        <span class="navbar-brand fw-semibold">PrettyJSON</span>
+        <span class="navbar-brand fw-semibold">PrettyJSON.lat</span>
         <em class="navbar-text fw-semibold"> - online JSON tools</em>
       </div>
       <!-- TODO: add the other sections -->
@@ -28,7 +25,7 @@
         <nav class="navbar navbar-expand-lg justify-content-center py-0">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link link-secondary" href="#prettyEditor"
+              <a class="nav-link link-secondary" href="#prettify"
                 >Prettify &amp; Lint</a
               >
             </li>
@@ -50,9 +47,9 @@
     </div>
 
     <main>
-      <section id="prettyEditor">
+      <section id="prettify">
         <p>
-          Instantly lint, format, escape, unescape &amp; validate your JSON
+          Instantly lint, format, escape, unescape &amp; validate and more
           online.
         </p>
         <p>
@@ -100,28 +97,32 @@
       </section>
 
       <section id="validateSchema">
+        <p class="mx-5">Validate your JSON data against a draft-7 schema.</p>
         <div class="row justify-content-center">
           <div class="col-5">
-            <p class="fw-semibold">JSON Schema</p>
-            <div id="schemaParent" class="editorParent"></div>
+            <p class="fw-semibold">JSON input</p>
+            <div id="testJsonParent" class="editorParent"></div>
           </div>
+
           <div class="col-1 text-center align-self-center">
             <button id="validateButton" class="btn btn-secondary">
               Validate
             </button>
           </div>
+
           <div class="col-5">
-            <p class="fw-semibold">Input JSON</p>
-            <div id="testJsonParent" class="editorParent"></div>
+            <p class="fw-semibold">JSON Schema</p>
+            <div id="schemaParent" class="editorParent"></div>
           </div>
         </div>
         <div id="validateAlert" class="my-4 alert"></div>
       </section>
 
       <section id="jqFilter">
+        <p>Slice, filter, map and transform your JSON data using JQ.</p>
         <div class="row justify-content-center">
           <div class="col-4">
-            <p class="fw-semibold">Source JSON</p>
+            <p class="fw-semibold">JSON input</p>
             <div id="sourceJsonContainer" class="editorParent"></div>
           </div>
           <div class="col-4">
@@ -149,7 +150,7 @@
     <footer class="px-3">
       <hr />
       <p class="text-muted">
-        <strong>PrettyJSON</strong> &mdash; make your data readable.
+        <strong>PrettyJSON</strong> &mdash; make your JSON data readable.
       </p>
 
       <p class="text-muted">

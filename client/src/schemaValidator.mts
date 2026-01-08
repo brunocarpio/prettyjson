@@ -108,19 +108,11 @@ function main() {
     {
       type: "object",
       properties: {
-        first_name: { type: "string" },
-        last_name: { type: "string" },
-        birthday: { type: "string", format: "date" },
-        address: {
-          type: "object",
-          properties: {
-            street_address: { type: "string" },
-            city: { type: "string" },
-            state: { type: "string" },
-            country: { type: "string" },
-          },
-        },
+        foo: { type: "integer" },
+        bar: { type: "string" },
       },
+      required: ["foo"],
+      additionalProperties: false,
     },
     null,
     2,
@@ -131,15 +123,8 @@ function main() {
 
   let jInitialDoc = JSON.stringify(
     {
-      first_name: "George",
-      last_name: "Washington",
-      birthday: "1732-02-22",
-      address: {
-        street_address: "3200 Mount Vernon Memorial Highway",
-        city: "Mount Vernon",
-        state: "Virginia",
-        country: "United States",
-      },
+      foo: 1,
+      bar: "abc",
     },
     null,
     2,
