@@ -28,6 +28,11 @@ section {
   max-height: 600px;
 }
 
+#mappingJsonContainer {
+  min-height: 100px;
+  max-height: 300px;
+}
+
 .cm-json-error {
   content: url("https://www.svgrepo.com/show/288043/no-fire.svg");
 }

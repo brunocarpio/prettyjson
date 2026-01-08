@@ -31,12 +31,12 @@ export function syntaxErrorListener(editorParent: HTMLElement): Extension {
   });
 }
 
-export function fixedHeight(): Extension {
+export function fixedHeight(height: number = 600): Extension {
   return EditorView.theme({
     "&": {
       "font-size": "1rem",
       height: "100%",
-      "max-height": "600px",
+      "max-height": `${height}px`,
     },
     ".cm-scroller": {
       overflow: "auto",

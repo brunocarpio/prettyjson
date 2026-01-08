@@ -132,7 +132,12 @@ function main() {
   state.mEditor = new EditorView({
     state: EditorState.create({
       doc: initialQuery,
-      extensions: [basicSetup, fixedHeight(), state.theme.of(githubLight)],
+      extensions: [
+        basicSetup,
+        fixedHeight(100),
+        state.theme.of(githubLight),
+        EditorView.lineWrapping,
+      ],
     }),
     parent: mappingJsonContainer,
   });
