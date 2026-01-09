@@ -54,7 +54,6 @@ async function applyFilter(): Promise<void> {
     }
 
     const contentType = response.headers.get("content-type");
-    console.log(contentType);
     switch (contentType) {
       case "application/json; charset=utf-8":
         setObjectContentToEditorView(state.rEditor, await response.json());
@@ -66,12 +65,11 @@ async function applyFilter(): Promise<void> {
         setStringContentToEditorView(state.rEditor, "");
         break;
     }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error(error.message);
-      setStringContentToEditorView(state.rEditor, error.message);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      setStringContentToEditorView(state.rEditor, err.message);
     } else {
-      console.error("An unknown error occurred");
+      setStringContentToEditorView(state.rEditor, "unknown error occurred");
     }
   }
 }

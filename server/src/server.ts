@@ -42,10 +42,14 @@ app.post("/api/jq", limiter, async (req, res) => {
     } else {
       res.send(filtered);
     }
-  } catch (err) {
-    console.error(err);
-    res.json(err);
-    res.status(500).json({ error: "Processing failed" });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("exception occurred", err.stack);
+      res.status(500).send("An exception occurred");
+    } else {
+      console.error("unknown error occurred", err);
+      res.status(500).send("An unknown error occurred");
+    }
   }
 });
 
