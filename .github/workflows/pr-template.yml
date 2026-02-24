@@ -1,0 +1,51 @@
+name: Enhance PR Description
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  update-description:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate commit list
+        id: commits
+        run: |
+          # Get commits since the PR base branch (usually main)
+          COMMITS=$(git log origin/${{ github.base_ref }}..HEAD --pretty=format:"- %s" | sed 's/^/  /')
+
+          # Escape for JSON / YAML
+          COMMITS_ESCAPED="${COMMITS//$'\n'/\\n}"
+
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Update PR description
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          COMMIT_LIST: ${{ steps.commits.outputs.commits }}
+        run: |
+          # Simple body: existing body + commits section (if not already present)
+          BODY=$(gh pr view $PR_NUMBER --json body --jq .body)
+
+          if echo "$BODY" | grep -q "Recent commits:"; then
+            echo "Commits section already exists → skipping update"
+            exit 0
+          fi
+
+          NEW_BODY="$BODY
+
+          ## Recent commits
+          $COMMIT_LIST"
+
+          gh pr edit $PR_NUMBER --body "$NEW_BODY"
