@@ -81,4 +81,12 @@ jobs:
             sudo systemctl daemon-reload
             sudo systemctl restart prettyjson
             sleep 5
-            sudo systemctl status prettyjson --no-pager || echo "Failed to start service"
+            STATUS=$(sudo systemctl is-active prettyjson)
+            if [ "$STATUS" = "active" ]; then
+              echo "SUCCESS: prettyjson is active"
+              sudo systemctl status prettyjson --lines=5 --no-pager || true
+            else
+              echo "FAIL: prettyjson is $STATUS"
+              sudo journalctl -u prettyjson --since "5 minutes ago" --no-pager || true
+              exit 1
+            fi
