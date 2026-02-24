@@ -10,9 +10,12 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     env:
-      APP_NAME: "prettyjson"
+      APP_NAME: prettyjson
       DEPLOY_DIR: ${{ secrets.DEPLOY_DIR }}
+      SERVER_HOST: ${{ secrets.SERVER_HOST }}
+      SERVER_USER: ${{ secrets.SERVER_USER }}
 
     steps:
       - name: Checkout code
@@ -23,38 +26,95 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
+          cache-dependency-path: front-end/package-lock.json
 
-      - name: Install dependencies & build
-        run: |
-          npm ci
-          npm run build
-
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
+      - name: Setup Go
+        uses: actions/setup-go@v6
         with:
-          key: ${{ secrets.DEPLOY_KEY }}
-          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+          go-version: "1.23"
+          cache-dependency-path: back-end/go.sum
 
-      - name: Deploy to server via rsync
+      - name: Build frontend + backend
+        run: sh ./build.sh
+
+      - name: Show build artifacts (debug)
         run: |
-          # Only sync the built files and config
-          rsync -avz --delete \
-            --exclude '.git' \
-            --exclude 'src' \
-            --exclude 'node_modules' \
-            -e "ssh" \
-            ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ env.DEPLOY_DIR }}/
+          echo "Frontend dist:"
+          ls -la front-end/dist 2>/dev/null || echo "No front-end/dist found — check build.sh"
+          echo ""
+          echo "Backend files (expect binary):"
+          ls -la back-end/ | grep -E 'prettyjson|binary|dist|static|public' || echo "No obvious binary/static folder"
 
-      - name: Production Setup and Restart
-        uses: appleboy/ssh-action@v1
+      - name: Deploy files via rsync
+        uses: burnett01/rsync-deployments@v8
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
+          switches: -avzr --delete
+          path: ./
+          remote_path: ${{ env.DEPLOY_DIR }}/
+          remote_host: ${{ env.SERVER_HOST }}
+          remote_user: ${{ env.SERVER_USER }}
+          remote_key: ${{ secrets.DEPLOY_KEY }}
+          args_append: >-
+            --exclude=.git
+            --exclude=.github
+            --exclude=front-end/node_modules
+            --exclude=front-end/src
+            --exclude=front-end/public
+            --exclude=front-end/*.js.map
+            --exclude=back-end/*.go
+            --exclude=back-end/go.*
+            --exclude=**/*.md
+            --exclude=build.sh
+            --exclude=*.log
+            --exclude=*.tmp
+
+      - name: Restart application on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.SERVER_HOST }}
+          username: ${{ env.SERVER_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
-          envs: APP_NAME, DEPLOY_DIR
+          port: 22
+          envs: DEPLOY_DIR,APP_NAME
           script: |
-            cd $DEPLOY_DIR
-            npm ci --omit=dev
-            pm2 restart $APP_NAME --update-env || \
-              NODE_ENV=production pm2 start "node server/dist/server.js" --name $APP_NAME
-            pm2 save
+            set -euo pipefail
+
+            cd "${DEPLOY_DIR}"
+
+            BINARY="./back-end/${APP_NAME}"
+
+            if [ ! -x "$BINARY" ]; then
+              echo "ERROR: Binary not found or not executable → $BINARY"
+              ls -la back-end/ || true
+              exit 1
+            fi
+
+            echo "Current running processes:"
+            ps aux | grep -E "${APP_NAME}|${BINARY}" | grep -v grep || echo "No process found"
+
+            # Graceful stop attempt (send SIGTERM, give time to shutdown cleanly)
+            echo "Stopping old instance (if running)..."
+            pkill -TERM -f "${APP_NAME}" || true
+            sleep 4
+
+            # Force kill if still alive
+            pkill -KILL -f "${APP_NAME}" || true
+
+            echo "Starting new version..."
+            nohup "${BINARY}" >> server.log 2>&1 &
+
+            sleep 5
+
+            if pgrep -f "${APP_NAME}" > /dev/null; then
+              echo "Success: ${APP_NAME} is running"
+              tail -n 15 server.log
+            else
+              echo "Failed to start — check logs:"
+              cat server.log || echo "No log file found"
+              exit 1
+            fi
+
+            # Future systemd version (uncomment when ready):
+            # sudo systemctl daemon-reload
+            # sudo systemctl restart "${APP_NAME}"
+            # sudo systemctl status "${APP_NAME}" --no-pager
