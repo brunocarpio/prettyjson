@@ -3,7 +3,7 @@ module prettyjson
 go 1.25.5
 
 require (
-	github.com/gofiber/fiber/v2 v2.52.11
+	github.com/gofiber/fiber/v2 v2.52.12
 	github.com/itchyny/gojq v0.12.18
 )
 
