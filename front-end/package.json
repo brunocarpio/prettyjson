@@ -1,0 +1,22 @@
+{
+  "name": "prettyjson",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/language": "^6.12.1",
+    "@codemirror/lint": "^6.9.2",
+    "@codemirror/state": "^6.5.3",
+    "@codemirror/view": "^6.39.8",
+    "@ddietr/codemirror-themes": "^1.5.2",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "codemirror": "^6.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0"
+  }
+}

@@ -32,8 +32,9 @@ export const state: State = {
 };
 
 async function applyFilter(): Promise<void> {
-  const input = getObjectFromEditorView(state.sEditor);
-  if (!input) return;
+  const sourceJson = getObjectFromEditorView(state.sEditor);
+  if (!sourceJson) return;
+
   const filter = getStringFromEditorView(state.mEditor);
   if (!filter) return;
 
@@ -45,9 +46,11 @@ async function applyFilter(): Promise<void> {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         filter,
-        sourceJson: input,
+        sourceJson,
       }),
     });
+
+    console.log(response);
 
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
