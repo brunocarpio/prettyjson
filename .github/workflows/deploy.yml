@@ -77,40 +77,8 @@ jobs:
           port: 22
           envs: DEPLOY_DIR,APP_NAME
           script: |
-            set -euo pipefail
-
-            cd "${DEPLOY_DIR}" || { echo "Error: Cannot cd to ${DEPLOY_DIR}"; exit 1; }
-
-            BINARY="./back-end/${APP_NAME}"
-
-            if [ ! -x "$BINARY" ]; then
-              echo "ERROR: Binary not found or not executable at $BINARY"
-              ls -la back-end/ || true
-              exit 1
-            fi
-
-            echo "Looking for running instances..."
-            ps aux | grep -E "${APP_NAME}|${BINARY##*/}" | grep -v grep || echo "  → No running process found"
-
-            echo "Graceful shutdown attempt..."
-            pkill -TERM -f "${APP_NAME}" 2>/dev/null || true
-            sleep 5   # give more time for clean shutdown if it was running
-
-            # Final kill if needed
-            pkill -KILL -f "${APP_NAME}" 2>/dev/null || true
-
-            echo "Starting new instance..."
-            nohup "${BINARY}" >> server.log 2>&1 &
-
-            sleep 6
-
-            if pgrep -f "${APP_NAME}" > /dev/null; then
-              echo "SUCCESS: ${APP_NAME} appears to be running"
-              echo "Last 20 lines of server.log:"
-              tail -n 20 server.log
-            else
-              echo "FAIL: Process did not start"
-              echo "Full server.log:"
-              cat server.log || echo "No log file"
-              exit 1
-            fi
+            cd "${DEPLOY_DIR}"
+            sudo systemctl daemon-reload
+            sudo systemctl restart prettyjson
+            sleep 5
+            sudo systemctl status prettyjson --no-pager || echo "Failed to start service"
