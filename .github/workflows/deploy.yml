@@ -48,13 +48,8 @@ jobs:
       - name: Deploy files via rsync
         uses: burnett01/rsync-deployments@v8
         with:
-          switches: -avzr --delete
-          path: ./
-          remote_path: ${{ env.DEPLOY_DIR }}/
-          remote_host: ${{ env.SERVER_HOST }}
-          remote_user: ${{ env.SERVER_USER }}
-          remote_key: ${{ secrets.DEPLOY_KEY }}
-          args_append: >-
+          switches: >-
+            -avzr --delete
             --exclude=.git
             --exclude=.github
             --exclude=front-end/node_modules
@@ -67,6 +62,11 @@ jobs:
             --exclude=build.sh
             --exclude=*.log
             --exclude=*.tmp
+          path: ./
+          remote_path: ${{ env.DEPLOY_DIR }}/
+          remote_host: ${{ env.SERVER_HOST }}
+          remote_user: ${{ env.SERVER_USER }}
+          remote_key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Restart application on server
         uses: appleboy/ssh-action@v1.0.3
