@@ -90,7 +90,7 @@ func main() {
 		return c.Send(finalJson)
 	})
 
-	app.Static("/", filepath.Join("..", "front-end", "dist"))
+	app.Static("/", filepath.Join("front-end", "dist"))
 
 	log.Println("Server is listening on 0.0.0.0:3000 ...")
 	log.Fatal(app.Listen("0.0.0.0:3000"))
